@@ -1,0 +1,7 @@
+threadnum: 3
+durtion: 10
+concurrentuser: 3
+ramptime: 1
+casefolder: projectpath\testfolder\testcase
+resultrootfolder: projectpath\testfolder\testresult
+batfolder: projectpath\testfolder\batfolder
