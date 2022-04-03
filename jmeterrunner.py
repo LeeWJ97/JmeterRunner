@@ -58,7 +58,9 @@ logdrive.info(f'Run config: {json.dumps(getconfig,indent=4)}')
 filelist = []
 for i,j,k in os.walk(casefolder):
     filelist = k
-
+for i in filelist:
+    if '.jmx' not in i:
+        filelist.remove(i)
 logdrive.info(filelist)
 
 

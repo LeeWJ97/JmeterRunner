@@ -1,0 +1,28 @@
+2022-04-03 21:59:14,354 - INFO - Run config: {
+    "threadnum": 3,
+    "durtion": 10,
+    "concurrentuser": 3,
+    "ramptime": 1,
+    "casefolder": "D:\\jmeterrunner\\testfolder\\testcase",
+    "resultrootfolder": "D:\\jmeterrunner\\testfolder\\testresult",
+    "batfolder": "D:\\jmeterrunner\\testfolder\\batfolder"
+}
+2022-04-03 21:59:14,354 - INFO - ['sample.jmx']
+2022-04-03 21:59:14,354 - INFO - --------------------Runcount1 sample.jmx  start------------------------------
+2022-04-03 21:59:14,531 - INFO - b'\r\n'
+2022-04-03 21:59:14,532 - INFO - b'D:\\jmeterrunner\\testfolder\\batfolder\\2022-04-03_21_59_14.353>jmeter -n -t "D:\\jmeterrunner\\testfolder\\testcase\\sample.jmx" -l "D:\\jmeterrunner\\testfolder\\testresult\\2022-04-03_21_59_14.353\\sample.jtl" -e -o "D:\\jmeterrunner\\testfolder\\testresult\\2022-04-03_21_59_14.353\\sample" -Dthread.num=3 -Dd.duration=10 -Dc.concurrentuser=3 -Dr.ramptime=1 \r\n'
+2022-04-03 21:59:16,037 - INFO - b'Apr 03, 2022 9:59:16 PM java.util.prefs.WindowsPreferences <init>\r\n'
+2022-04-03 21:59:16,037 - INFO - b'WARNING: Could not open/create prefs root node Software\\JavaSoft\\Prefs at root 0x80000002. Windows RegCreateKeyEx(...) returned error code 5.\r\n'
+2022-04-03 21:59:16,308 - INFO - b'Creating summariser <summary>\r\n'
+2022-04-03 21:59:16,325 - INFO - b'Created the tree successfully using D:\\jmeterrunner\\testfolder\\testcase\\sample.jmx\r\n'
+2022-04-03 21:59:16,328 - INFO - b'Starting standalone test @ Sun Apr 03 21:59:16 CST 2022 (1648994356327)\r\n'
+2022-04-03 21:59:16,333 - INFO - b'Waiting for possible Shutdown/StopTestNow/HeapDump/ThreadDump message on port 4445\r\n'
+2022-04-03 21:59:21,206 - INFO - b'summary =    105 in 00:00:05 =   22.7/s Avg:   129 Min:     0 Max:  2279 Err:    50 (47.62%)\r\n'
+2022-04-03 21:59:21,206 - INFO - b'Tidying up ...    @ Sun Apr 03 21:59:21 CST 2022 (1648994361206)\r\n'
+2022-04-03 21:59:21,845 - INFO - b'... end of run\r\n'
+2022-04-03 21:59:22,366 - INFO - [finish running for 10 s] jmeter -n -t "D:\jmeterrunner\testfolder\testcase\sample.jmx" -l "D:\jmeterrunner\testfolder\testresult\2022-04-03_21_59_14.353\sample.jtl" -e -o "D:\jmeterrunner\testfolder\testresult\2022-04-03_21_59_14.353\sample" -Dthread.num=3 -Dd.duration=10 -Dc.concurrentuser=3 -Dr.ramptime=1
+2022-04-03 21:59:22,366 - INFO - 0
+2022-04-03 21:59:22,367 - INFO - 
+
+
+2022-04-03 21:59:27,382 - INFO - --------------------Runcount1 sample.jmx   end------------------------------
