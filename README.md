@@ -1,0 +1,3 @@
+# JmeterRunner
+一款快捷运行jmeter case的小工具
+将要执行的case放进testcase即可
