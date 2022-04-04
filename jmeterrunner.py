@@ -3,8 +3,9 @@ import time,os,yaml,sys
 from datetime import datetime
 from subprocess import Popen, PIPE, STDOUT
 import logger
-
-
+#projectpath = os.path.dirname(sys.argv[0]).replace('/','\\')
+projectpath = sys.path[0]
+print('projectpath:',projectpath)
 def stamp2time(timestamp):
     try:
         k = len(str(timestamp)) - 10
@@ -16,11 +17,11 @@ def stamp2time(timestamp):
         return [False,str(e)]
 
 #读取配置文件
-with open('config.yml','r',encoding='utf-8') as f:
+with open(f'{projectpath}\config.yml','r',encoding='utf-8') as f:
     getconfig = yaml.safe_load(f)
 
 #更新目录
-projectpath = os.path.dirname(sys.argv[0]).replace('/','\\')
+
 getconfig.update({'casefolder':getconfig['casefolder'].replace('projectpath',projectpath)})
 getconfig.update({'resultrootfolder':getconfig['resultrootfolder'].replace('projectpath',projectpath)})
 getconfig.update({'batfolder':getconfig['batfolder'].replace('projectpath',projectpath)})
