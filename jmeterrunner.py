@@ -112,4 +112,4 @@ for i in filelist:
         logdrive.info(f'--------------------Runcount{runcount} {i}   end------------------------------')
 
 print('done')
-input('')
+#input('')
