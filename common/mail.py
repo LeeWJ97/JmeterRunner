@@ -1,0 +1,101 @@
+# @Time : 2020.7.17
+# @Author : LeeWJ
+# @Function  :  邮件发送模块
+# @Version  : 2.1
+import json
+from smtplib import SMTP_SSL
+from email.header import Header
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from common import config
+from common.logger import Logger
+
+
+loggerobj = Logger(path= rf'.')
+class Mail:
+    """
+        用于获取配置并发送邮件
+    """
+    def __init__(self, result_path=[] ,result_name=[]):
+
+        self.mail_info = {}
+        # 发件人
+        self.mail_info['from'] = config.configdict['mail']
+        self.mail_info['username'] = config.configdict['mail']
+        # smtp服务器域名
+        self.mail_info['hostname'] = f"smtp.{config.configdict['mail'][config.configdict['mail'].rfind('@') + 1:config.configdict['mail'].__len__()]}"
+
+        # 发件人的密码
+        self.mail_info['password'] = config.configdict['pwd']
+        # 收件人
+        self.mail_info['to'] = str(config.configdict['mailto']).split(',')
+        # 抄送人
+        self.mail_info['cc'] = str(config.configdict['mailcopy']).split(',')
+        # 邮件标题
+        self.mail_info['mail_subject'] = config.configdict['mailtitle']
+        self.mail_info['mail_encoding'] = config.configdict['mail_encoding']
+        # 添加自定义昵称
+        self.mail_info['mailnick'] = config.configdict['mailnick']
+        # 附件内容
+        self.mail_info['filepaths'] = result_path
+        self.mail_info['filenames'] = result_name
+
+
+    def send(self, text):
+        smtp = SMTP_SSL(self.mail_info['hostname'])
+        smtp.set_debuglevel(0)
+
+        ''' SMTP 'ehlo' command.
+        Hostname to send for this command defaults to the FQDN of the local
+        host.
+        '''
+        smtp.ehlo(self.mail_info['hostname'])
+        smtp.login(self.mail_info['username'], self.mail_info['password'])
+
+
+        # 普通HTML邮件
+        # msg = MIMEText(text, 'html', self.mail_info['mail_encoding'])
+
+        # 支持附件的邮件
+        msg = MIMEMultipart()
+        msg.attach(MIMEText(text, 'html', self.mail_info['mail_encoding']))
+        msg['Subject'] = Header(self.mail_info['mail_subject'], self.mail_info['mail_encoding'])
+        # msg['from'] = self.mail_info['from']
+        # 添加自定义昵称
+        h = Header(self.mail_info['mailnick'], 'utf-8')
+        h.append('<' + self.mail_info['from'] + '>', 'ascii')
+        msg["from"] = h
+
+        msg['to'] = ','.join(self.mail_info['to'])
+        if self.mail_info['cc'] != ['None']:
+            msg['cc'] = ','.join(self.mail_info['cc'])
+
+        receive = self.mail_info['to']
+        if self.mail_info['cc'] != ['None']:
+            receive += self.mail_info['cc']
+
+        # 添加附件
+        for i in range(len(self.mail_info['filepaths'])):
+            att1 = MIMEText(open(self.mail_info['filepaths'][i], 'rb').read(), 'base64', 'utf-8')
+            att1['Content-Type'] = 'application/octet-stream'
+            att1.add_header('Content-Disposition', 'attachment', filename=('gbk', '', self.mail_info['filenames'][i]))
+
+            msg.attach(att1)
+
+        for i in range(3):
+            try:
+                smtp.sendmail(self.mail_info['from'], receive, msg.as_string())
+                smtp.quit()
+                loggerobj.info('邮件发送成功')
+                break
+            except Exception as e:
+                loggerobj.error(f'邮件发送失败第{i}次，重试发送，达到3次后不再重试：')
+                loggerobj.exception(e)
+
+
+if __name__ == '__main__':
+    config.get_config('../config.yml')
+    loggerobj.debug(config.configdict)
+    mail = Mail()
+    html = '这是一封测试邮件'
+    mail.send(html)

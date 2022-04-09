@@ -1,72 +1,75 @@
-import json
-import time,os,yaml,sys
-from datetime import datetime
-from subprocess import Popen, PIPE, STDOUT
-import logger
-#projectpath = os.path.dirname(sys.argv[0]).replace('/','\\')
+import json,time,os,sys
+from common import config,commontool
 projectpath = sys.path[0]
-print('projectpath:',projectpath)
-def stamp2time(timestamp):
-    try:
-        k = len(str(timestamp)) - 10
-        timestamp = datetime.fromtimestamp(timestamp / (1 * 10 ** k))
-        timestr = timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")
-        return timestr[:-3]
-    except Exception as e:
-        print(e)
-        return [False,str(e)]
-
+config.configdict.update({'projectpath':projectpath})
 #读取配置文件
-with open(f'{projectpath}\config.yml','r',encoding='utf-8') as f:
-    getconfig = yaml.safe_load(f)
+config.get_config(rf'{projectpath}\config.yml')
 
 #更新目录
-
-getconfig.update({'casefolder':getconfig['casefolder'].replace('projectpath',projectpath)})
-getconfig.update({'resultrootfolder':getconfig['resultrootfolder'].replace('projectpath',projectpath)})
-getconfig.update({'batfolder':getconfig['batfolder'].replace('projectpath',projectpath)})
+config.configdict.update({'casefolder':config.configdict['casefolder'].replace('projectpath',projectpath)})
+config.configdict.update({'resultrootfolder':config.configdict['resultrootfolder'].replace('projectpath',projectpath)})
+config.configdict.update({'batfolder':config.configdict['batfolder'].replace('projectpath',projectpath)})
 
 #赋值
-threadnum = getconfig['threadnum']
-durtion = getconfig['durtion']
-concurrentuser = getconfig['concurrentuser']
-ramptime = getconfig['ramptime']
-casefolder = getconfig['casefolder']
-resultrootfolder = getconfig['resultrootfolder']
-batfolder = getconfig['batfolder']
-
-
-nowtime = stamp2time(int(time.time()*1000)).replace(':','_').replace(' ','_')
+threadnum = config.configdict['threadnum']
+durtion = config.configdict['durtion']
+concurrentuser = config.configdict['concurrentuser']
+ramptime = config.configdict['ramptime']
+casefolder = config.configdict['casefolder']
+resultrootfolder = config.configdict['resultrootfolder']
+batfolder = config.configdict['batfolder']
+nowtime = commontool.stamp2time(int(time.time()*1000)).replace(':','_').replace(' ','_')
 resultpath = rf'{resultrootfolder}\{nowtime}'
 
-#判断是否存在必要的文件夹
-if not os.path.exists(batfolder):
-    os.mkdir(batfolder)
-    print(f'[log] create {batfolder} successfully!')
 
-if not os.path.exists(resultrootfolder):
-    os.mkdir(resultrootfolder)
-    print(f'[log] create {resultrootfolder} successfully!')
-
-if not os.path.exists(resultpath):
-    os.mkdir(resultpath)
-    print(f'[log] create {resultrootfolder}\{nowtime} successfully!')
+#检查文件夹是否存在，不存在就新建
+commontool.newfolder(batfolder)
+commontool.newfolder(resultrootfolder)
+commontool.newfolder(resultpath)
 
 #实例化logger
+from common import logger
+print('--------------------------------',resultpath)
 logdrive = logger.Logger(resultpath)
-logdrive.info(f'Run config: {json.dumps(getconfig,indent=4)}')
+
+from subprocess import Popen, PIPE, STDOUT
+from common import mail,zip
+
+
+print('projectpath:',projectpath)
+
+#命令行传参更新邮箱信息
+try:
+    config.configdict['mail'] = sys.argv[1]
+except:
+    pass
+try:
+    config.configdict['pwd'] = sys.argv[2]
+except:
+    pass
+try:
+    config.configdict['mailto'] = sys.argv[3]
+except:
+    pass
+
+showconfig = dict()
+for k,v in config.configdict.items():
+    if ('mail' in k) or ('pwd' in k):
+        continue
+    showconfig.update({k:v})
+logdrive.info(f'Run config: {json.dumps(showconfig)}')
 
 filelist = []
+bakfilelist = []
 for i,j,k in os.walk(casefolder):
     filelist = k
 for i in filelist:
-    if '.jmx' not in i:
-        filelist.remove(i)
+    if '.jmx' in i:
+        bakfilelist.append(i)
+
+filelist = bakfilelist
 logdrive.info(filelist)
 
-
-# with open(rf'{resultpath}\config.txt','w',encoding='utf8') as f:
-#     f.write(f'threadnum:{threadnum}  duration:{durtion}  concurrentuser:{concurrentuser}  ramptime:{ramptime}')
 
 #开始循环case
 runcount = 0
@@ -112,4 +115,10 @@ for i in filelist:
         logdrive.info(f'--------------------Runcount{runcount} {i}   end------------------------------')
 
 print('done')
+zippath = rf'{resultrootfolder}\PerfTestResult_{nowtime}'
+zip.Zip(zippath,rf'{resultrootfolder}\{nowtime}')
+
+mailobj = mail.Mail([zippath+'.zip'],[rf'PerfTestResult_{nowtime}.zip'])
+mailobj.send(f'<h2>{nowtime} PerfTestResult</h2><p>{json.dumps(showconfig)}</p>')
+print('send mail done')
 #input('')

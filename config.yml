@@ -5,3 +5,14 @@ ramptime: 1
 casefolder: projectpath\testfolder\testcase
 resultrootfolder: projectpath\testfolder\testresult
 batfolder: projectpath\testfolder\batfolder
+
+
+################邮件配置##################
+mail:
+pwd:
+mailto:
+mailcopy:
+mailtitle: 性能测试报告
+mail_encoding: utf8
+mailtxt:
+mailnick: LeePerfTest
