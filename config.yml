@@ -1,5 +1,5 @@
 threadnum: 3
-durtion: 10
+durtion: 1800
 concurrentuser: 3
 ramptime: 1
 casefolder: projectpath\testfolder\testcase
