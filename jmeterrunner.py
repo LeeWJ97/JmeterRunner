@@ -12,7 +12,7 @@ config.configdict.update({'batfolder':config.configdict['batfolder'].replace('pr
 
 #赋值
 threadnum = config.configdict['threadnum']
-durtion = config.configdict['durtion']
+duration = config.configdict['duration']
 concurrentuser = config.configdict['concurrentuser']
 ramptime = config.configdict['ramptime']
 casefolder = config.configdict['casefolder']
@@ -85,12 +85,12 @@ for i in filelist:
     if not os.path.exists(rf'{batfolder}\{nowtime}'):
         os.mkdir(rf'{batfolder}\{nowtime}')
 
-    cmd = rf'jmeter -n -t "{casefolder}\{i}" -l "{resultrootfolder}\{nowtime}\{resultname}.jtl" -e -o "{resultrootfolder}\{nowtime}\{resultname}" -Dthread.num={str(threadnum)} -Dd.duration={str(durtion)} -Dc.concurrentuser={str(concurrentuser)} -Dr.ramptime={str(ramptime)}'
+    cmd = rf'jmeter -n -t "{casefolder}\{i}" -l "{resultrootfolder}\{nowtime}\{resultname}.jtl" -e -o "{resultrootfolder}\{nowtime}\{resultname}" -Dthread.num={str(threadnum)} -Dd.duration={str(duration)} -Dc.concurrentuser={str(concurrentuser)} -Dr.ramptime={str(ramptime)}'
     with open(rf'{batfolder}\{nowtime}\{resultname}.bat','w',encoding='utf8') as f:
         f.write(f'{cmd}')
     #################执行####################
     try:
-        print(f'[run for {durtion} s] {cmd}')
+        print(f'[run for {duration} s] {cmd}')
         print('\n')
         os.chdir(rf'{batfolder}\{nowtime}')
         p = Popen(f"cmd.exe /c {batfolder}\{nowtime}\{resultname}.bat", stdout=PIPE, stderr=STDOUT)
@@ -102,7 +102,7 @@ for i in filelist:
             curline = p.stdout.readline()
 
         p.wait()
-        logdrive.info(f'[finish running for {durtion} s] {cmd}')
+        logdrive.info(f'[finish running for {duration} s] {cmd}')
         logdrive.info(p.returncode)
         logdrive.info('\n\n')
         time.sleep(5)
